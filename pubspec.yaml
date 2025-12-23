@@ -1,0 +1,36 @@
+name: lab10
+description: "A Flutter project integrated with Firebase."
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: ">=3.2.0 <4.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # Firebase Core (Required)
+  firebase_core: ^2.27.0
+
+  # Firebase Authentication
+  firebase_auth: ^4.15.0
+
+  # Cloud Firestore (You may still need it for other tasks)
+  cloud_firestore: ^4.17.0
+
+  # Firebase Realtime Database (Required for lab CRUD)
+  firebase_database: ^10.5.1
+
+  # UI icons
+  cupertino_icons: ^1.0.8
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+  flutter_lints: ^5.0.0
+
+flutter:
+  uses-material-design: true
