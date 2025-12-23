@@ -4,14 +4,13 @@ import 'package:firebase_database/firebase_database.dart';
 class CrudPage extends StatefulWidget {
   final String type; // "task" or "profile"
 
-  CrudPage({required this.type});
+  const CrudPage({super.key, required this.type}); // Added const & key
 
   @override
   _CrudPageState createState() => _CrudPageState();
 }
 
 class _CrudPageState extends State<CrudPage> {
-
   // Controllers
   final taskController = TextEditingController();
   final nameController = TextEditingController();
@@ -33,18 +32,19 @@ class _CrudPageState extends State<CrudPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.type == "task" ? "Task Management" : "Profile Management"),
+        title: Text(
+          widget.type == "task" ? "Task Management" : "Profile Management",
+        ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(20),
         child: Column(
           children: [
-
             /// INPUTS
             if (widget.type == "task") ...[
               TextField(
                 controller: taskController,
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   labelText: "Enter Task",
                   border: OutlineInputBorder(),
                 ),
@@ -52,30 +52,30 @@ class _CrudPageState extends State<CrudPage> {
             ] else ...[
               TextField(
                 controller: nameController,
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   labelText: "Name",
                   border: OutlineInputBorder(),
                 ),
               ),
-              SizedBox(height: 10),
+              const SizedBox(height: 10),
               TextField(
                 controller: emailController,
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   labelText: "Email",
                   border: OutlineInputBorder(),
                 ),
               ),
-              SizedBox(height: 10),
+              const SizedBox(height: 10),
               TextField(
                 controller: ageController,
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   labelText: "Age",
                   border: OutlineInputBorder(),
                 ),
               ),
             ],
 
-            SizedBox(height: 15),
+            const SizedBox(height: 15),
 
             /// ADD / UPDATE BUTTON
             ElevatedButton(
@@ -115,32 +115,30 @@ class _CrudPageState extends State<CrudPage> {
               },
             ),
 
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
 
             /// LIST
             Expanded(
-              child: StreamBuilder(
+              child: StreamBuilder<DatabaseEvent>(
                 stream: db.onValue,
                 builder: (context, snapshot) {
-                  if (!snapshot.hasData ||
-                      snapshot.data == null ||
-                      (snapshot.data! as DatabaseEvent).snapshot.value == null) {
+                  if (!snapshot.hasData || snapshot.data!.snapshot.value == null) {
                     return Center(child: Text("No ${widget.type}s Found"));
                   }
 
-                  final data = (snapshot.data! as DatabaseEvent).snapshot.value as Map;
+                  final data = snapshot.data!.snapshot.value as Map<dynamic, dynamic>;
                   final items = data.entries.toList();
 
                   return ListView.builder(
                     itemCount: items.length,
                     itemBuilder: (context, index) {
                       final id = items[index].key;
-                      final item = items[index].value;
+                      final item = items[index].value as Map<dynamic, dynamic>;
 
                       return Card(
                         child: ListTile(
                           leading: widget.type == "task"
-                              ? Icon(Icons.task_alt)
+                              ? const Icon(Icons.task_alt)
                               : CircleAvatar(
                             child: Text(item['name'][0].toUpperCase()),
                           ),
@@ -158,7 +156,7 @@ class _CrudPageState extends State<CrudPage> {
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               IconButton(
-                                icon: Icon(Icons.edit, color: Colors.blue),
+                                icon: const Icon(Icons.edit, color: Colors.blue),
                                 onPressed: () {
                                   editId = id;
                                   if (widget.type == "task") {
@@ -171,7 +169,7 @@ class _CrudPageState extends State<CrudPage> {
                                 },
                               ),
                               IconButton(
-                                icon: Icon(Icons.delete, color: Colors.red),
+                                icon: const Icon(Icons.delete, color: Colors.red),
                                 onPressed: () {
                                   db.child(id).remove();
                                 },
@@ -184,7 +182,7 @@ class _CrudPageState extends State<CrudPage> {
                   );
                 },
               ),
-            )
+            ),
           ],
         ),
       ),
