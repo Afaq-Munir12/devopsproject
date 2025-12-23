@@ -314,9 +314,9 @@ jobs:
           if [ -n "$LATEST_RTDB" ]; then
             BACKUP_AGE=$(($(date +%s) - $(stat -c %Y "$LATEST_RTDB")))
             HOURS=$((BACKUP_AGE / 3600))
-            
+          
             echo "Last backup was $HOURS hours ago"
-            
+          
             if [ $HOURS -gt 48 ]; then
               echo "⚠️  WARNING: Backup is older than 48 hours!"
             else
