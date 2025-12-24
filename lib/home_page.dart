@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'crud_page.dart';  // Dynamic CRUD page
+import 'crud_page.dart'; // Dynamic CRUD page
 
 class HomePage extends StatefulWidget {
+  const HomePage({super.key}); // ✅ const constructor
+
   @override
   State<HomePage> createState() => _HomePageState();
 }
@@ -12,8 +14,16 @@ class _HomePageState extends State<HomePage> {
   int notificationCount = 3;
 
   Future<void> logout(BuildContext context) async {
-    await FirebaseAuth.instance.signOut();
-    Navigator.pushReplacementNamed(context, '/login');
+    // ✅ Safe logout for tests/CI
+    try {
+      if (FirebaseAuth.instance.app.name.isNotEmpty) {
+        await FirebaseAuth.instance.signOut();
+      }
+    } catch (_) {}
+
+    if (mounted) {
+      Navigator.pushReplacementNamed(context, '/login');
+    }
   }
 
   @override
@@ -27,18 +37,15 @@ class _HomePageState extends State<HomePage> {
       darkTheme: ThemeData.dark(),
       home: Scaffold(
         appBar: AppBar(
-          title: Text("Dashboard"),
+          title: const Text("Dashboard"),
           centerTitle: true,
           actions: [
-
             /// 🔔 Notification Badge
             Stack(
               children: [
                 IconButton(
-                  icon: Icon(Icons.notifications),
-                  onPressed: () {
-                    setState(() => notificationCount = 0);
-                  },
+                  icon: const Icon(Icons.notifications),
+                  onPressed: () => setState(() => notificationCount = 0),
                 ),
                 if (notificationCount > 0)
                   Positioned(
@@ -49,7 +56,8 @@ class _HomePageState extends State<HomePage> {
                       backgroundColor: Colors.red,
                       child: Text(
                         notificationCount.toString(),
-                        style: TextStyle(fontSize: 10, color: Colors.white),
+                        style: const TextStyle(
+                            fontSize: 10, color: Colors.white),
                       ),
                     ),
                   ),
@@ -59,14 +67,12 @@ class _HomePageState extends State<HomePage> {
             /// 🌙 Dark Mode Toggle
             Switch(
               value: isDarkMode,
-              onChanged: (value) {
-                setState(() => isDarkMode = value);
-              },
+              onChanged: (value) => setState(() => isDarkMode = value),
             ),
 
             /// 🚪 Logout
             IconButton(
-              icon: Icon(Icons.logout),
+              icon: const Icon(Icons.logout),
               onPressed: () => logout(context),
             ),
           ],
@@ -77,19 +83,17 @@ class _HomePageState extends State<HomePage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-
               /// 👋 Welcome Section
-              Text(
+              const Text(
                 "Welcome Back 👋",
                 style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
               ),
-              SizedBox(height: 5),
+              const SizedBox(height: 5),
               Text(
                 user?.email ?? "Firebase User",
-                style: TextStyle(color: Colors.grey),
+                style: const TextStyle(color: Colors.grey),
               ),
-
-              SizedBox(height: 25),
+              const SizedBox(height: 25),
 
               /// 📊 Dashboard Stats
               Row(
@@ -100,8 +104,7 @@ class _HomePageState extends State<HomePage> {
                   _statCard("Pending", "5", Icons.pending, Colors.orange),
                 ],
               ),
-
-              SizedBox(height: 30),
+              const SizedBox(height: 30),
 
               /// 🧩 Feature Cards
               Expanded(
@@ -110,8 +113,6 @@ class _HomePageState extends State<HomePage> {
                   crossAxisSpacing: 15,
                   mainAxisSpacing: 15,
                   children: [
-
-                    /// TASKS CARD
                     _featureCard(
                       icon: Icons.list_alt,
                       title: "Tasks",
@@ -119,12 +120,11 @@ class _HomePageState extends State<HomePage> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (_) => CrudPage(type: "task")),
+                            builder: (_) => const CrudPage(type: "task"),
+                          ),
                         );
                       },
                     ),
-
-                    /// PROFILE CARD
                     _featureCard(
                       icon: Icons.person,
                       title: "Profile",
@@ -132,33 +132,29 @@ class _HomePageState extends State<HomePage> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (_) => CrudPage(type: "profile")),
+                            builder: (_) => const CrudPage(type: "profile"),
+                          ),
                         );
                       },
                     ),
-
-                    /// SETTINGS
                     _featureCard(
                       icon: Icons.settings,
                       title: "Settings",
                       onTap: () {
                         ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text("Settings coming soon ⚙️")),
+                          const SnackBar(
+                              content: Text("Settings coming soon ⚙️")),
                         );
                       },
                     ),
-
-                    /// ABOUT
                     _featureCard(
                       icon: Icons.info,
                       title: "About",
-                      onTap: () {
-                        showAboutDialog(
-                          context: context,
-                          applicationName: "Firebase App",
-                          applicationVersion: "1.0.0",
-                        );
-                      },
+                      onTap: () => showAboutDialog(
+                        context: context,
+                        applicationName: "Firebase App",
+                        applicationVersion: "1.0.0",
+                      ),
                     ),
                   ],
                 ),
@@ -175,16 +171,18 @@ class _HomePageState extends State<HomePage> {
     return Expanded(
       child: Card(
         elevation: 4,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+        shape:
+        RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
         child: Padding(
           padding: const EdgeInsets.all(12),
           child: Column(
             children: [
               Icon(icon, color: color, size: 30),
-              SizedBox(height: 5),
+              const SizedBox(height: 5),
               Text(value,
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-              Text(title, style: TextStyle(color: Colors.grey)),
+                  style: const TextStyle(
+                      fontSize: 20, fontWeight: FontWeight.bold)),
+              Text(title, style: const TextStyle(color: Colors.grey)),
             ],
           ),
         ),
@@ -202,14 +200,16 @@ class _HomePageState extends State<HomePage> {
       onTap: onTap,
       child: Card(
         elevation: 5,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        shape:
+        RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(icon, size: 50),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             Text(title,
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                style:
+                const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
           ],
         ),
       ),

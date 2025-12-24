@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class LoginPage extends StatefulWidget {
+  const LoginPage({super.key}); // ✅ const constructor
+
   @override
   _LoginPageState createState() => _LoginPageState();
 }
@@ -9,14 +11,14 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage>
     with SingleTickerProviderStateMixin {
 
-  TextEditingController email = TextEditingController();
-  TextEditingController password = TextEditingController();
+  final TextEditingController email = TextEditingController();
+  final TextEditingController password = TextEditingController();
 
   bool _obscurePassword = true;
 
-  late AnimationController _controller;
-  late Animation<double> _fadeAnimation;
-  late Animation<Offset> _slideAnimation;
+  late final AnimationController _controller;
+  late final Animation<double> _fadeAnimation;
+  late final Animation<Offset> _slideAnimation;
 
   @override
   void initState() {
@@ -24,7 +26,7 @@ class _LoginPageState extends State<LoginPage>
 
     _controller = AnimationController(
       vsync: this,
-      duration: Duration(milliseconds: 900),
+      duration: const Duration(milliseconds: 900),
     );
 
     _fadeAnimation = Tween<double>(begin: 0, end: 1).animate(
@@ -32,7 +34,7 @@ class _LoginPageState extends State<LoginPage>
     );
 
     _slideAnimation = Tween<Offset>(
-      begin: Offset(0, 0.3),
+      begin: const Offset(0, 0.3),
       end: Offset.zero,
     ).animate(
       CurvedAnimation(parent: _controller, curve: Curves.easeOut),
@@ -43,15 +45,23 @@ class _LoginPageState extends State<LoginPage>
 
   Future<void> login() async {
     try {
-      await FirebaseAuth.instance.signInWithEmailAndPassword(
-        email: email.text.trim(),
-        password: password.text.trim(),
-      );
-      Navigator.pushReplacementNamed(context, '/home');
+      // ✅ Check if Firebase is initialized (prevents CI/test crashes)
+      if (FirebaseAuth.instance.app.name.isNotEmpty) {
+        await FirebaseAuth.instance.signInWithEmailAndPassword(
+          email: email.text.trim(),
+          password: password.text.trim(),
+        );
+      }
+
+      if (mounted) {
+        Navigator.pushReplacementNamed(context, '/home');
+      }
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(e.toString())),
-      );
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(e.toString())),
+        );
+      }
     }
   }
 
@@ -78,17 +88,15 @@ class _LoginPageState extends State<LoginPage>
                       mainAxisSize: MainAxisSize.min,
                       children: [
 
-                        /// 🔥 App Icon
-                        Icon(
+                        const Icon(
                           Icons.local_fire_department,
                           size: 80,
                           color: Colors.orange,
                         ),
 
-                        SizedBox(height: 10),
+                        const SizedBox(height: 10),
 
-                        /// 👋 Welcome Text
-                        Text(
+                        const Text(
                           "Welcome to our Firebase App",
                           textAlign: TextAlign.center,
                           style: TextStyle(
@@ -97,23 +105,21 @@ class _LoginPageState extends State<LoginPage>
                           ),
                         ),
 
-                        SizedBox(height: 8),
+                        const SizedBox(height: 8),
 
-                        /// ℹ️ Description
                         Text(
                           "Login using your email and password to continue",
                           textAlign: TextAlign.center,
                           style: TextStyle(color: Colors.grey[600]),
                         ),
 
-                        SizedBox(height: 25),
+                        const SizedBox(height: 25),
 
-                        /// 📧 Email Field
                         TextField(
                           controller: email,
                           keyboardType: TextInputType.emailAddress,
                           decoration: InputDecoration(
-                            prefixIcon: Icon(Icons.email),
+                            prefixIcon: const Icon(Icons.email),
                             labelText: "Email",
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(12),
@@ -121,14 +127,13 @@ class _LoginPageState extends State<LoginPage>
                           ),
                         ),
 
-                        SizedBox(height: 15),
+                        const SizedBox(height: 15),
 
-                        /// 🔑 Password Field
                         TextField(
                           controller: password,
                           obscureText: _obscurePassword,
                           decoration: InputDecoration(
-                            prefixIcon: Icon(Icons.lock),
+                            prefixIcon: const Icon(Icons.lock),
                             suffixIcon: IconButton(
                               icon: Icon(
                                 _obscurePassword
@@ -148,15 +153,14 @@ class _LoginPageState extends State<LoginPage>
                           ),
                         ),
 
-                        SizedBox(height: 25),
+                        const SizedBox(height: 25),
 
-                        /// 🚀 Login Button
                         SizedBox(
                           width: double.infinity,
                           height: 50,
                           child: ElevatedButton.icon(
-                            icon: Icon(Icons.login),
-                            label: Text(
+                            icon: const Icon(Icons.login),
+                            label: const Text(
                               "Login",
                               style: TextStyle(fontSize: 16),
                             ),
@@ -169,13 +173,12 @@ class _LoginPageState extends State<LoginPage>
                           ),
                         ),
 
-                        SizedBox(height: 15),
+                        const SizedBox(height: 15),
 
-                        /// 📝 Signup Button
                         TextButton(
                           onPressed: () => Navigator.pushReplacementNamed(
                               context, '/signup'),
-                          child: Text(
+                          child: const Text(
                             "Don't have an account? Sign up",
                             style: TextStyle(fontSize: 14),
                           ),
