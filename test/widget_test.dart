@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:lab10/crud_page.dart'; // make sure path is correct
+import 'package:lab10/crud_page.dart';
 
 void main() {
   testWidgets('CrudPage renders correctly', (WidgetTester tester) async {
     // Build the CrudPage widget inside a MaterialApp
     await tester.pumpWidget(
-      const MaterialApp(
+      MaterialApp(
         home: CrudPage(type: 'task'),
       ),
     );
