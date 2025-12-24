@@ -4,20 +4,22 @@ import 'package:lab10/crud_page.dart';
 
 void main() {
   testWidgets('CrudPage renders correctly', (WidgetTester tester) async {
-    // Build the CrudPage widget inside a MaterialApp
     await tester.pumpWidget(
-      MaterialApp(
-        home: CrudPage(type: 'task'),
+      const MaterialApp(
+        home: CrudPage(
+          type: 'task',
+          disableFirebase: true, // ✅ CRITICAL
+        ),
       ),
     );
 
-    // Verify AppBar title
+    // AppBar title
     expect(find.text('Task Management'), findsOneWidget);
 
-    // Verify Add button exists
+    // Add button text
     expect(find.text('Add Task'), findsOneWidget);
 
-    // Verify TextField exists
+    // Task TextField
     expect(find.byType(TextField), findsOneWidget);
   });
 }
